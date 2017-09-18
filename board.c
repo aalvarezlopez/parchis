@@ -175,6 +175,7 @@ void drawInernalCell(WINDOW **windows,uint8_t cell, uint16_t yPos, uint16_t xPos
     wrefresh(windows[cell]);
 }
 
+
 void drawHomes(WINDOW **windows)
 {
     for(uint8_t i=0; i<4; i++){
@@ -379,11 +380,89 @@ void drawDoubleToken(WINDOW **windows, uint8_t token, uint8_t *color)
     wrefresh(windows[token]);
 }
 
+void drawBigNumber(WINDOW *window, uint8_t number)
+{
+    box(window,0,0);
+    switch(number){
+        case 0:
+            mvwprintw(window, 4 , 7, " ");
+            mvwprintw(window, 4 , 8, " ");
+            mvwprintw(window, 5 , 6, " ");
+            mvwprintw(window, 5 , 9, " ");
+            mvwprintw(window, 6 , 6, " ");
+            mvwprintw(window, 6 , 9, " ");
+            mvwprintw(window, 7 , 6, " ");
+            mvwprintw(window, 7 , 9, " ");
+            mvwprintw(window, 8 , 6, " ");
+            mvwprintw(window, 8 , 9, " ");
+            mvwprintw(window, 9 , 7, " ");
+            mvwprintw(window, 9 , 8, " ");
+            break;
+        case 1:
+            mvwprintw(window, 4 , 7, " ");
+            mvwprintw(window, 4 , 8, " ");
+            mvwprintw(window, 5 , 6, " ");
+            mvwprintw(window, 5 , 8, " ");
+            mvwprintw(window, 6 , 8, " ");
+            mvwprintw(window, 7 , 8, " ");
+            mvwprintw(window, 8 , 8, " ");
+            mvwprintw(window, 9 , 7, " ");
+            mvwprintw(window, 9 , 8, " ");
+            mvwprintw(window, 9 , 9, " ");
+            break;
+        case 2:
+            mvwprintw(window, 4 , 7, " ");
+            mvwprintw(window, 4 , 8, " ");
+            mvwprintw(window, 5 , 6, " ");
+            mvwprintw(window, 5 , 9, " ");
+            mvwprintw(window, 6 , 10, " ");
+            mvwprintw(window, 7 , 8, " ");
+            mvwprintw(window, 7 , 9, " ");
+            mvwprintw(window, 8 , 7, " ");
+            mvwprintw(window, 9 , 6, " ");
+            mvwprintw(window, 9 , 7, " ");
+            mvwprintw(window, 9 , 8, " ");
+            mvwprintw(window, 9 , 9, " ");
+            mvwprintw(window, 9 , 10, " ");
+            break;
+        case 3:
+            mvwprintw(window, 4 , 7, " ");
+            mvwprintw(window, 4 , 8, " ");
+            mvwprintw(window, 4 , 9, " ");
+            mvwprintw(window, 5 , 9, " ");
+            mvwprintw(window, 6 , 8, " ");
+            mvwprintw(window, 6 , 9, " ");
+            mvwprintw(window, 7 , 9, " ");
+            mvwprintw(window, 8 , 9, " ");
+            mvwprintw(window, 9 , 7, " ");
+            mvwprintw(window, 9 , 8, " ");
+            mvwprintw(window, 9 , 9, " ");
+            break;
+        case 4:
+            mvwprintw(window, 4 , 6, " ");
+            mvwprintw(window, 4 , 8, " ");
+            mvwprintw(window, 5 , 6, " ");
+            mvwprintw(window, 5 , 8, " ");
+            mvwprintw(window, 6 , 6, " ");
+            mvwprintw(window, 6 , 7, " ");
+            mvwprintw(window, 6 , 8, " ");
+            mvwprintw(window, 7 , 8, " ");
+            mvwprintw(window, 8 , 8, " ");
+            mvwprintw(window, 9 , 8, " ");
+            break;
+        default:
+            mvwprintw(window, 5 , 5, " ");
+    }
+}
+
 void drawTokentsAtHome(WINDOW **windows, uint8_t *numberOfTokens)
 {
     for(uint8_t i=0; i<4; i++){
+        werase(windows[i]);
+        wrefresh(windows[i]);
         wattron(windows[i], COLOR_PAIR(6));
         mvwprintw(windows[i], 1,1, "Number of tokens at home %d", numberOfTokens[i]);
+        drawBigNumber(windows[i], numberOfTokens[i]);
         wrefresh(windows[i]);
     }
 }
@@ -397,8 +476,18 @@ void drawBoardTools(WINDOW **windows)
 
 void drawLog(WINDOW *window, char *string)
 {
-    window = newwin(5,2*HOME_WIDTH+3*HCELL_WIDTH+DICE_WIDTH, HOME_HEIGHT*2 + 3*VCELL_WIDTH, 0);
-    box(window,0,0);
+    window = newwin(2*HOME_HEIGHT+3*VCELL_WIDTH - DICE_HEIGHT,DICE_WIDTH,
+        DICE_HEIGHT,
+        HOME_WIDTH * 2 + 3*HCELL_WIDTH);
+    wbkgd(window, COLOR_PAIR(7));
     mvwprintw(window, 1,1, string);
     wrefresh(window);
+}
+
+void drawCurrentUser(WINDOW **windows, uint8_t user)
+{
+    wattron(windows[user], COLOR_PAIR(6));
+    mvwprintw(windows[user], 3,12, "****");
+    mvwprintw(windows[user], 4,12, "****");
+    wrefresh(windows[user]);
 }

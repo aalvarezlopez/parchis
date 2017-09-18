@@ -109,6 +109,35 @@ uint8_t getValidMovements(uint8_t currentPlayer, uint8_t diceValue, uint8_t *mov
     return validMovements;
 }
 
+uint8_t getTokenToMove(uint8_t numberOfMovements, uint8_t *validMovements, WINDOW *logWdw)
+{
+    bool validKey = false;
+    char ch;
+    char string[100];
+    sprintf(string, "Select token to move:\n");
+    for(uint8_t i=0; i<numberOfMovements; i++){
+        char tempStr[100];
+        sprintf(tempStr, " * [key=%d] Token in position %d\n", i+1, tokenPositions[currentPlayer][validMovements[i]]+1);
+        strcat(string, tempStr);
+    }
+    drawLog(logWdw, string);
+    refreshBoard();
+    while(validKey != true){
+        ch = wgetch(cells[0]);
+        if( (ch<'1') || (ch>=('1'+numberOfMovements)) ){
+            char invalidStr[100];
+            strcpy(invalidStr, string);
+            strcat(invalidStr, "Invalid key, please select a correct token to move");
+            drawLog(logWdw, invalidStr);
+            refreshBoard();
+        }else{
+            validKey = true;
+            strcat(string, "Token moving, press any key to continue");
+        }
+    }
+    return (ch-'1');
+}
+
 void initialization(void)
 {
     drawHomes(home);
@@ -119,6 +148,7 @@ void initialization(void)
 
 T_actions getUserAction(void)
 {
+    drawCurrentUser(home, currentPlayer);
     char actionKey = wgetch(home[0]);
     return (actionKey == 'q') ? USERACTION_EXIT : USERACTION_LAUNCH;
 }
@@ -128,22 +158,25 @@ void executeUserAction(void)
     uint8_t numberOfMovements;
     uint8_t validMovements[4];
     uint8_t diceValue = newLaunch();
+    uint8_t tokenToMove = 0;
     char string[100];
     drawBoardTools(tools);
     numberOfMovements = getValidMovements(currentPlayer, diceValue, validMovements);
-    sprintf(string, "numer of movements = %d --> %d %d %d %d\nCurrent player %d",
-        numberOfMovements,
-        validMovements[0], validMovements[1], validMovements[2], validMovements[3],
-        currentPlayer);
     if((tokenPositions[currentPlayer][validMovements[0]] == HOMEVALUE) &&
         (numberOfMovements == 1)){
+        sprintf(string, "Token moving out of home. Press any key to continue");
         tokenPositions[currentPlayer][validMovements[0]] = __homePosition[currentPlayer];
     }else if(numberOfMovements>0){
-        tokenPositions[currentPlayer][validMovements[0]] = 
-            tokenPositions[currentPlayer][validMovements[0]]  + diceValue;
+        tokenToMove = getTokenToMove(numberOfMovements, validMovements, logWdw);
+        tokenPositions[currentPlayer][validMovements[tokenToMove]] = 
+            tokenPositions[currentPlayer][validMovements[tokenToMove]]  + diceValue;
+        sprintf(string, "Token moving. Press any key to continue");
+    }else{
+        sprintf(string, "Movement not possible. Press any key to continue");
     }
     drawLog(logWdw, string);
     refreshBoard();
+    wgetch(cells[0]);
     currentPlayer++;
     currentPlayer = currentPlayer % 4;
 }
