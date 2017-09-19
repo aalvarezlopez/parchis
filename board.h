@@ -17,4 +17,5 @@ void drawDoubleToken(WINDOW **windows, uint8_t token, uint8_t *color);
 void drawTokentsAtHome(WINDOW **windows, uint8_t *numberOfTokens);
 void drawLog(WINDOW *window, char *string);
 void drawCurrentUser(WINDOW **windows, uint8_t user);
+void addToLog(WINDOW *window, char *string);
 #endif

@@ -43,6 +43,8 @@ typedef enum{
 #define CORNER7 24
 #define CORNER8 25
 
+char __strLog[1024];
+
 void drawHorizontalCells(WINDOW **windows, uint16_t yPos, uint16_t xPos,
     uint8_t iStart, uint8_t specialIndex, T_KindOfCells kind, uint8_t color, T_IncDirection direction)
 {
@@ -58,11 +60,15 @@ void drawHorizontalCells(WINDOW **windows, uint16_t yPos, uint16_t xPos,
         }
 
         if(direction == INCREMENTION){
-            windows[index] = newwin(VCELL_WIDTH, VCELL_HEIGHT,
-                yPos, xPos + (i * VCELL_HEIGHT));
+            if(windows[index] == NULL){
+                windows[index] = newwin(VCELL_WIDTH, VCELL_HEIGHT,
+                    yPos, xPos + (i * VCELL_HEIGHT));
+            }
         }else{
-            windows[index] = newwin(VCELL_WIDTH, VCELL_HEIGHT,
-                yPos, xPos - (i * VCELL_HEIGHT));
+            if(windows[index] == NULL){
+                windows[index] = newwin(VCELL_WIDTH, VCELL_HEIGHT,
+                    yPos, xPos - (i * VCELL_HEIGHT));
+            }
         }
 
         if( (kind == CELLSHOME) && (i ==specialIndex)) {
@@ -97,11 +103,15 @@ void drawVerticalCells(WINDOW **windows, uint16_t yPos, uint16_t xPos,
             }
         }
         if(direction == INCREMENTION){
-            windows[index] = newwin(HCELL_HEIGHT, HCELL_WIDTH,
-                i*HCELL_HEIGHT+yPos, xPos);
+            if(windows[index] == NULL){
+                windows[index] = newwin(HCELL_HEIGHT, HCELL_WIDTH,
+                    i*HCELL_HEIGHT+yPos, xPos);
+            }
         }else{
-            windows[index] = newwin(HCELL_HEIGHT, HCELL_WIDTH,
-                yPos - i*HCELL_HEIGHT, xPos);
+            if(windows[index] == NULL){
+                windows[index] = newwin(HCELL_HEIGHT, HCELL_WIDTH,
+                    yPos - i*HCELL_HEIGHT, xPos);
+            }
         }
 
         if( (kind == CELLSHOME) && (i == specialIndex)){
@@ -125,8 +135,10 @@ void drawVerticalCells(WINDOW **windows, uint16_t yPos, uint16_t xPos,
 void drawInernalCell(WINDOW **windows,uint8_t cell, uint16_t yPos, uint16_t xPos,
     uint8_t kind)
 {
-    windows[cell] = newwin(VCELL_WIDTH/2, HCELL_WIDTH,
-        yPos, xPos);
+    if(windows[cell] == NULL){
+        windows[cell] = newwin(VCELL_WIDTH/2, HCELL_WIDTH,
+            yPos, xPos);
+    }
     wattron(windows[cell], COLOR_PAIR(5));
     switch(kind){
         case 0:
@@ -179,9 +191,11 @@ void drawInernalCell(WINDOW **windows,uint8_t cell, uint16_t yPos, uint16_t xPos
 void drawHomes(WINDOW **windows)
 {
     for(uint8_t i=0; i<4; i++){
-        uint16_t yPos = (i%2) == 0 ? 0 : (HCELL_HEIGHT*7)+(VCELL_WIDTH*3);
+        uint16_t yPos = ((i == 0) || (i ==3)) ? 0 : (HCELL_HEIGHT*7)+(VCELL_WIDTH*3);
         uint16_t xPos = (i/2) == 0 ? 0 : (VCELL_HEIGHT*7)+(HCELL_WIDTH*3);
-        windows[i] = newwin(HOME_HEIGHT,HOME_WIDTH,yPos,xPos);
+        if(windows[i] == NULL){
+            windows[i] = newwin(HOME_HEIGHT,HOME_WIDTH,yPos,xPos);
+        }
         wbkgd(windows[i], COLOR_PAIR(i+1));
         wrefresh(windows[i]);
     }
@@ -196,9 +210,9 @@ void drawCells(WINDOW **windows)
     drawHorizontalCells(windows, 7*HCELL_HEIGHT+(2*VCELL_WIDTH), 0, 51, 4,
         CELLSHOME, 2, INCREMENTION);
     drawHorizontalCells(windows, 7*HCELL_HEIGHT, (13*VCELL_HEIGHT)+(3*HCELL_WIDTH), 17, 4,
-        CELLSHOME, 3, DECREMENTION);
+        CELLSHOME, 4, DECREMENTION);
     drawHorizontalCells(windows, 7*HCELL_HEIGHT+VCELL_WIDTH, (13*VCELL_HEIGHT)+(3*HCELL_WIDTH), 16, 0,
-        CELLSEND, 3, DECREMENTION);
+        CELLSEND, 4, DECREMENTION);
     drawHorizontalCells(windows, 7*HCELL_HEIGHT+(2*VCELL_WIDTH),(7*VCELL_HEIGHT)+(3*HCELL_WIDTH), 9, 2,
         CELLSHOME, 6, INCREMENTION);
 
@@ -211,9 +225,9 @@ void drawCells(WINDOW **windows)
     drawVerticalCells(windows, (7*HCELL_HEIGHT)+(3*VCELL_WIDTH), 7*VCELL_HEIGHT, 60, 2,
         CELLSHOME, 6, INCREMENTION);
     drawVerticalCells(windows, (13*HCELL_HEIGHT)+(3*VCELL_WIDTH), 7*VCELL_HEIGHT+HCELL_WIDTH ,67, 0,
-        CELLSEND, 4, DECREMENTION);
+        CELLSEND, 3, DECREMENTION);
     drawVerticalCells(windows, (13*HCELL_HEIGHT)+(3*VCELL_WIDTH), 7*VCELL_HEIGHT+(2*HCELL_WIDTH), 0, 4,
-        CELLSHOME, 4, DECREMENTION);
+        CELLSHOME, 3, DECREMENTION);
 }
 
 void drawCenter(WINDOW **windows)
@@ -460,8 +474,6 @@ void drawTokentsAtHome(WINDOW **windows, uint8_t *numberOfTokens)
     for(uint8_t i=0; i<4; i++){
         werase(windows[i]);
         wrefresh(windows[i]);
-        wattron(windows[i], COLOR_PAIR(6));
-        mvwprintw(windows[i], 1,1, "Number of tokens at home %d", numberOfTokens[i]);
         drawBigNumber(windows[i], numberOfTokens[i]);
         wrefresh(windows[i]);
     }
@@ -469,16 +481,36 @@ void drawTokentsAtHome(WINDOW **windows, uint8_t *numberOfTokens)
 
 void drawBoardTools(WINDOW **windows)
 {
-    windows[0] = newwin(DICE_HEIGHT, DICE_WIDTH,
-        0, (2 * HOME_WIDTH) + (3 * HCELL_WIDTH));
+    if(windows[0] == NULL){
+        windows[0] = newwin(DICE_HEIGHT, DICE_WIDTH,
+            0, (2 * HOME_WIDTH) + (3 * HCELL_WIDTH) + 3);
+    }
     drawDice(windows[0]);
+}
+
+void addToLog(WINDOW *window, char *string)
+{
+    werase(window);
+    strcat(__strLog, string);
+    if(window == NULL){
+        window = newwin(2*HOME_HEIGHT+3*VCELL_WIDTH - DICE_HEIGHT,DICE_WIDTH*2,
+            DICE_HEIGHT,
+            HOME_WIDTH * 2 + 3*HCELL_WIDTH + 3);
+    }
+    wbkgd(window, COLOR_PAIR(7));
+    mvwprintw(window, 1,1, __strLog);
+    wrefresh(window);
+    wgetch(window);
 }
 
 void drawLog(WINDOW *window, char *string)
 {
-    window = newwin(2*HOME_HEIGHT+3*VCELL_WIDTH - DICE_HEIGHT,DICE_WIDTH,
-        DICE_HEIGHT,
-        HOME_WIDTH * 2 + 3*HCELL_WIDTH);
+    strcpy(__strLog, string);
+    if(window == NULL){
+        window = newwin(2*HOME_HEIGHT+3*VCELL_WIDTH - DICE_HEIGHT,DICE_WIDTH*2,
+            DICE_HEIGHT,
+            HOME_WIDTH * 2 + 3*HCELL_WIDTH + 3);
+    }
     wbkgd(window, COLOR_PAIR(7));
     mvwprintw(window, 1,1, string);
     wrefresh(window);

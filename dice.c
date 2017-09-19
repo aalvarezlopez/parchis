@@ -82,6 +82,7 @@ void drawNumber(WINDOW *window, uint8_t number)
 
 void drawDice(WINDOW* window)
 {
+    werase(window);
     box(window,0,0);
     wattron(window, COLOR_PAIR(5));
     drawNumber(window, __lastValue);

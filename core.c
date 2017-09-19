@@ -15,7 +15,11 @@ WINDOW* cells[110];
 WINDOW* tools[10];
 WINDOW* logWdw;
 
-uint8_t __homePosition[4] = {38, 55, 21, 4};
+#define NMAXWALLS 16
+#define MAXCELLVALUE 68
+
+uint8_t __homePosition[4] = {38, 55, 4, 21};
+uint8_t __finalsPosition[4] = {33, 50, 0, 16};
 
 uint8_t tokenPositions[4][4] = {{HOMEVALUE,HOMEVALUE,HOMEVALUE,HOMEVALUE},
     {HOMEVALUE,HOMEVALUE,HOMEVALUE,HOMEVALUE},
@@ -23,7 +27,7 @@ uint8_t tokenPositions[4][4] = {{HOMEVALUE,HOMEVALUE,HOMEVALUE,HOMEVALUE},
     {HOMEVALUE,HOMEVALUE,HOMEVALUE,HOMEVALUE}};
 uint8_t currentPlayer = 0;
 uint8_t numberOfTokensAtHome[] = {0,0,0,0};
-uint8_t walls[16] = { INVALIDVALUE, INVALIDVALUE, INVALIDVALUE, INVALIDVALUE,
+uint8_t walls[NMAXWALLS] = { INVALIDVALUE, INVALIDVALUE, INVALIDVALUE, INVALIDVALUE,
     INVALIDVALUE, INVALIDVALUE, INVALIDVALUE, INVALIDVALUE,
     INVALIDVALUE, INVALIDVALUE, INVALIDVALUE, INVALIDVALUE,
     INVALIDVALUE, INVALIDVALUE, INVALIDVALUE, INVALIDVALUE
@@ -83,27 +87,74 @@ void refreshBoard(void)
     drawTokentsAtHome(home, numberOfTokensAtHome);
 }
 
+bool movementAccrossWall(uint8_t initialPosition, uint8_t finalPosition)
+{
+    bool result = false;
+    if(initialPosition == HOMEVALUE){
+        addToLog(logWdw, "Cheking movements when token is at home");
+        for(uint8_t i; i < NMAXWALLS; i++){
+            if(walls[i] == finalPosition && walls[i]!= INVALIDVALUE){
+                result = true;
+            }
+        }
+    } else if(initialPosition <= __finalsPosition[currentPlayer] &&
+        finalPosition >= __finalsPosition[currentPlayer]){
+        addToLog(logWdw, "Cheking movements when token goes over its final position");
+        for(uint8_t i; i < NMAXWALLS; i++){
+            if(walls[i] <= __finalsPosition[currentPlayer] && walls[i]!= INVALIDVALUE){
+                result = true;
+            }
+        }
+    } else if(initialPosition < MAXCELLVALUE &&
+        finalPosition > MAXCELLVALUE){
+        addToLog(logWdw, "Cheking movements when token goes over general final position");
+        for(uint8_t i; i < NMAXWALLS; i++){
+            if((walls[i] <= finalPosition || walls[i] > initialPosition) && walls[i]!= INVALIDVALUE){
+                result = true;
+            }
+        }
+    }else{
+        addToLog(logWdw, "Cheking movements ");
+        for(uint8_t i; i < NMAXWALLS; i++){
+            if(walls[i] > initialPosition && walls[i] <= finalPosition && walls[i]!= INVALIDVALUE){
+                result = true;
+            }
+        }
+    }
+    return result;
+}
+
 uint8_t getValidMovements(uint8_t currentPlayer, uint8_t diceValue, uint8_t *movements)
 {
     uint8_t validMovements = 0;
     if(numberOfTokensAtHome[currentPlayer] != 0){
-        if(diceValue == 5){
+        if((diceValue == 5) && !movementAccrossWall(HOMEVALUE,__homePosition[currentPlayer])){
             validMovements = 1;
             movements[0] = numberOfTokensAtHome[currentPlayer]-1;
         }else if(numberOfTokensAtHome[currentPlayer]!=4){
             validMovements = 4 - numberOfTokensAtHome[currentPlayer];
             uint8_t index = 0;
             for(uint8_t i = numberOfTokensAtHome[currentPlayer]; i<4; i++){
-                movements[index] = i;
-                index++;
+                if(movementAccrossWall(tokenPositions[currentPlayer][i], 
+                        tokenPositions[currentPlayer][i] + diceValue)){
+                    validMovements--;
+                }else{
+                    movements[index] = i;
+                    index++;
+                }
             }
         }
     }else{
         validMovements = 4 - numberOfTokensAtHome[currentPlayer];
         uint8_t index = 0;
         for(uint8_t i = numberOfTokensAtHome[currentPlayer]; i<4; i++){
-            movements[index] = i;
-            index++;
+            if(movementAccrossWall(tokenPositions[currentPlayer][i], 
+                    tokenPositions[currentPlayer][i] + diceValue)){
+                validMovements--;
+            }else{
+                movements[index] = i;
+                index++;
+            }
         }
     }
     return validMovements;
@@ -132,7 +183,6 @@ uint8_t getTokenToMove(uint8_t numberOfMovements, uint8_t *validMovements, WINDO
             refreshBoard();
         }else{
             validKey = true;
-            strcat(string, "Token moving, press any key to continue");
         }
     }
     return (ch-'1');
@@ -170,6 +220,7 @@ void executeUserAction(void)
         tokenToMove = getTokenToMove(numberOfMovements, validMovements, logWdw);
         tokenPositions[currentPlayer][validMovements[tokenToMove]] = 
             tokenPositions[currentPlayer][validMovements[tokenToMove]]  + diceValue;
+        tokenPositions[currentPlayer][validMovements[tokenToMove]] %= MAXCELLVALUE; 
         sprintf(string, "Token moving. Press any key to continue");
     }else{
         sprintf(string, "Movement not possible. Press any key to continue");
