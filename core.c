@@ -17,6 +17,8 @@ WINDOW* logWdw;
 
 #define NMAXWALLS 16
 #define MAXCELLVALUE 68
+#define BASEOFENDS 70
+#define LENENDS 10
 
 uint8_t __homePosition[4] = {38, 55, 4, 21};
 uint8_t __finalsPosition[4] = {33, 50, 0, 16};
@@ -110,6 +112,9 @@ bool movementAccrossWall(uint8_t initialPosition, uint8_t finalPosition)
         addToLog(logWdw, "Cheking movements when token goes over general final position");
         for(uint8_t i; i < NMAXWALLS; i++){
             if((walls[i] <= finalPosition || walls[i] > initialPosition) && walls[i]!= INVALIDVALUE){
+                char info[100];
+                sprintf(info, "wal number %d in position %d", i, walls[i]);
+                addToLog(logWdw, info);
                 result = true;
             }
         }
@@ -218,6 +223,14 @@ void executeUserAction(void)
         tokenPositions[currentPlayer][validMovements[0]] = __homePosition[currentPlayer];
     }else if(numberOfMovements>0){
         tokenToMove = getTokenToMove(numberOfMovements, validMovements, logWdw);
+
+        if((tokenPositions[currentPlayer][validMovements[tokenToMove]] < __finalsPosition[currentPlayer]) &&
+            ((tokenPositions[currentPlayer][validMovements[tokenToMove]] + diceValue) > __finalsPosition[currentPlayer])){
+            tokenPositions[currentPlayer][validMovements[tokenToMove]] =
+                ((tokenPositions[currentPlayer][validMovements[tokenToMove]] + diceValue)
+                % __finalsPosition[currentPlayer]) + ( BASEOFENDS + (LENENDS * currentPlayer));
+        }
+
         tokenPositions[currentPlayer][validMovements[tokenToMove]] = 
             tokenPositions[currentPlayer][validMovements[tokenToMove]]  + diceValue;
         tokenPositions[currentPlayer][validMovements[tokenToMove]] %= MAXCELLVALUE; 
