@@ -9,8 +9,7 @@
 #ifndef DICE_HEADER
 #define DICE_HEADER
 
-uint8_t newLaunch(void);
-uint8_t getLastValue(void);
-void drawDice(WINDOW* window);
+uint8_t dice_newLaunch(void);
+uint8_t dice_getLastValue(void);
 
 #endif

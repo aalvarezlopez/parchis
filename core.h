@@ -21,7 +21,7 @@ typedef enum actions{
 #define INVALIDVALUE 200
 #define HOMEVALUE 201
 
-void initialization(void);
-T_actions getUserAction(void);
-void executeUserAction(void);
+void core_initialization(void);
+T_actions core_getUserAction(void);
+void core_executeUserAction(void);
 #endif

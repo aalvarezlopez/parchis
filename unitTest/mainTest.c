@@ -12,7 +12,8 @@
 #include <string.h>
 #include "CUnit/Basic.h"
 
-uint8_t getValidMovements(uint8_t currentPlayer, uint8_t diceValue, uint8_t *movements);
+uint8_t getValidMovements(uint8_t currentPlayer, uint8_t diceValue,
+                          uint8_t *movements);
 extern uint8_t numberOfTokensAtHome[];
 extern uint8_t tokenPositions[][4];
 
@@ -24,7 +25,7 @@ extern uint8_t tokenPositions[][4];
  */
 int init_suite1(void)
 {
-    for(uint8_t i=0; i<4; i++){
+    for(uint8_t i = 0; i < 4; i++) {
         numberOfTokensAtHome[i] = 4;
     }
     return 0;
@@ -75,26 +76,24 @@ void testMoveAcrrosWall(void)
 int main()
 {
     CU_pSuite pSuite = NULL;
-
     /* initialize the CUnit test registry */
-    if (CUE_SUCCESS != CU_initialize_registry())
+    if (CUE_SUCCESS != CU_initialize_registry()) {
         return CU_get_error();
-
+    }
     /* add a suite to the registry */
     pSuite = CU_add_suite("Core suite case", init_suite1, clean_suite1);
     if (NULL == pSuite) {
         CU_cleanup_registry();
         return CU_get_error();
     }
-
     /* add the tests to the suite */
-    if ((NULL == CU_add_test(pSuite, "Testig validation of movements", testValidMovements)) ||
-        (NULL == CU_add_test(pSuite, "Testing movments accross the WALL", testMoveAcrrosWall)))
-    {
+    if ((NULL == CU_add_test(pSuite, "Testig validation of movements",
+                             testValidMovements)) ||
+            (NULL == CU_add_test(pSuite, "Testing movments accross the WALL",
+                                 testMoveAcrrosWall))) {
         CU_cleanup_registry();
         return CU_get_error();
     }
-
     /* Run all tests using the CUnit Basic interface */
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();

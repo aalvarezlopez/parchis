@@ -1,3 +1,6 @@
 **.o
 **.exe
 **.exe.*
+**.swp
+tags
+cscope.out

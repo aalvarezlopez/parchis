@@ -9,13 +9,15 @@
 #ifndef BOARD_HEADER
 #define BOARD_HEADER
 
-void drawHomes(WINDOW **windows);
-void drawCells(WINDOW **windows);
-void drawCenter(WINDOW **windows);
-void drawToken(WINDOW **windows, uint8_t token, uint8_t color);
-void drawDoubleToken(WINDOW **windows, uint8_t token, uint8_t *color);
-void drawTokentsAtHome(WINDOW **windows, uint8_t *numberOfTokens);
-void drawLog(WINDOW *window, char *string);
-void drawCurrentUser(WINDOW **windows, uint8_t user);
-void addToLog(WINDOW *window, char *string);
+void brd_drawHomes(WINDOW **windows);
+void brd_drawCells(WINDOW **windows);
+void brd_drawCenter(WINDOW **windows);
+void brd_drawToken(WINDOW **windows, uint8_t token, uint8_t color);
+void brd_drawDoubleToken(WINDOW **windows, uint8_t token, uint8_t *color);
+void brd_drawTokentsAtHome(WINDOW **windows, uint8_t *numberOfTokens);
+void brd_drawLog(WINDOW *window, char *string);
+void brd_drawCurrentUser(WINDOW **windows, uint8_t user);
+void brd_addToLog(WINDOW *window, char *string);
+void brd_drawDice(WINDOW* window);
+void brd_drawBoardTools(WINDOW **windows);
 #endif
