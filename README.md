@@ -1,2 +1,2 @@
 # parchis
-![alt text](https://raw.githubusercontent.com/username/projectname/branch/path/to/img.png)
+![alt text](https://https://github.com/aalvarezlopez/parchis/tree/master/docs/executeUserActionSequence.png)
