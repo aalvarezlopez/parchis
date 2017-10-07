@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>50</x>
+      <y>50</y>
+      <w>600</w>
+<h>370</h>    </coordinates>
+    <panel_attributes>*Package::core*
+--
+- __finalsPosition: uint8_t
+- __homePosition: uint8_t
+- cells: WINDOW
+- currentPlayer: uint8_t
+- home: WINDOW
+- logWdw: WINDOW
+- numberOfTokensAtHome: uint8_t
+- tokenPositions: uint8_t
+- tools: WINDOW
+- walls: uint8_t
+--
++ core_executeUserAction(void): void
++ core_getUserAction(void): T_actions
++ core_initialization(void): void
+- core_executeUserAction(void): void
+- core_getUserAction(void): T_actions
+- core_initialization(void): void
+- getTokenToMove(uint8_t numberOfMovements, uint8_t *validMovements, WINDOW *logWdw): uint8_t
+- getValidMovements(uint8_t currentPlayer, uint8_t diceValue, uint8_t *movements): uint8_t
+- movementAccrossWall(uint8_t initialPosition, uint8_t finalPosition): bool
+- refreshBoard(void): void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
+#Date:3 10 2017 - GIT release: r01ase

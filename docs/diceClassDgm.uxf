@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>50</x>
+      <y>50</y>
+      <w>600</w>
+<h>145</h>    </coordinates>
+    <panel_attributes>*Package::dice*
+--
+- __lastValue: uint8_t
+--
++ dice_getLastValue(void): uint8_t
++ dice_newLaunch(void): uint8_t
+- dice_getLastValue(void): uint8_t
+- dice_newLaunch(void): uint8_t
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
+#Date:3 10 2017 - GIT release: r01ase

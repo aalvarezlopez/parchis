@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>50</x>
+      <y>50</y>
+      <w>600</w>
+<h>565</h>    </coordinates>
+    <panel_attributes>*Package::board*
+--
+- __strLog: char
+--
++ brd_addToLog(WINDOW *window, char *string): void
++ brd_cleanCells(WINDOW **cells, uint8_t numberOfCells): void
++ brd_drawBoardTools(WINDOW **windows): void
++ brd_drawCells(WINDOW **windows): void
++ brd_drawCenter(WINDOW **windows): void
++ brd_drawCurrentUser(WINDOW **windows, uint8_t user): void
++ brd_drawDice(WINDOW* window): void
++ brd_drawDoubleToken(WINDOW **windows, uint8_t token, uint8_t *color): void
++ brd_drawHomes(WINDOW **windows): void
++ brd_drawLog(WINDOW *window, char *string): void
++ brd_drawToken(WINDOW **windows, uint8_t token, uint8_t color): void
++ brd_drawTokentsAtHome(WINDOW **windows, uint8_t *numberOfTokens): void
+- brd_addToLog(WINDOW *window, char *string): void
+- brd_cleanCells(WINDOW **cells, uint8_t numberOfCells): void
+- brd_drawBoardTools(WINDOW **windows): void
+- brd_drawCells(WINDOW **windows): void
+- brd_drawCenter(WINDOW **windows): void
+- brd_drawCurrentUser(WINDOW **windows, uint8_t user): void
+- brd_drawDice(WINDOW *window): void
+- brd_drawDoubleToken(WINDOW **windows, uint8_t token, uint8_t *color): void
+- brd_drawHomes(WINDOW **windows): void
+- brd_drawLog(WINDOW *window, char *string): void
+- brd_drawToken(WINDOW **windows, uint8_t token, uint8_t color): void
+- brd_drawTokentsAtHome(WINDOW **windows, uint8_t *numberOfTokens): void
+- drawBigNumber(WINDOW *window, uint8_t number): void
+- drawDot(WINDOW *window, uint8_t posY, uint8_t posX): void
+- drawHorizontalCells(WINDOW **windows, uint16_t yPos, uint16_t xPos,$/;"): void
+- drawInernalCell(WINDOW **windows, uint8_t cell, uint16_t yPos,$/;"): void
+- drawNumber(WINDOW *window, uint8_t number): void
+- drawSpeciallDoubleToken(WINDOW **windows, uint8_t token, uint8_t *color): void
+- drawSpeciallToken(WINDOW **windows, uint8_t token, uint8_t color): void
+- drawVerticalCells(WINDOW **windows, uint16_t yPos, uint16_t xPos,$/;"): void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
+#Date:3 10 2017 - GIT release: r01ase

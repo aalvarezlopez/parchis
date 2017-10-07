@@ -601,3 +601,11 @@ void brd_drawDice(WINDOW *window)
     drawNumber(window, dice_getLastValue());
     wrefresh(window);
 }
+
+void brd_cleanCells(WINDOW **cells, uint8_t numberOfCells)
+{
+    for(uint8_t i = 0; i < numberOfCells; i++) {
+        werase(cells[i]);
+        wrefresh(cells[i]);
+    }
+}

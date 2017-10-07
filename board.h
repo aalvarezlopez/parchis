@@ -20,4 +20,5 @@ void brd_drawCurrentUser(WINDOW **windows, uint8_t user);
 void brd_addToLog(WINDOW *window, char *string);
 void brd_drawDice(WINDOW* window);
 void brd_drawBoardTools(WINDOW **windows);
+void brd_cleanCells(WINDOW **cells, uint8_t numberOfCells);
 #endif

@@ -44,10 +44,7 @@ void refreshBoard(void)
     uint8_t isDouble = false;
     uint8_t color[] = {0, 0};
     uint8_t copyTokenPositions[4][4];
-    for(uint8_t i = 0; i < 110; i++) {
-        werase(cells[i]);
-        wrefresh(cells[i]);
-    }
+    brd_cleanCells(cells, 110);
     brd_drawCells(cells);
     brd_drawCenter(cells);
     memcpy(copyTokenPositions, tokenPositions, sizeof(tokenPositions));
@@ -209,6 +206,13 @@ void core_initialization(void)
     brd_drawBoardTools(tools);
     brd_drawLog(logWdw, "Press q for exit, any key for launch dice");
     refreshBoard();
+    #ifdef TESTING
+    /*Replacement of the position of the tokens, this is done to testing how
+     * the board shows some specific situations
+     */
+    tokenPositions[0][3] = 41;
+    tokenPositions[1][3] = 7;
+    #endif
 }
 
 T_actions core_getUserAction(void)
