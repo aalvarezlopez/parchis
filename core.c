@@ -206,13 +206,13 @@ void core_initialization(void)
     brd_drawBoardTools(tools);
     brd_drawLog(logWdw, "Press q for exit, any key for launch dice");
     refreshBoard();
-    #ifdef TESTING
+#ifdef TESTING
     /*Replacement of the position of the tokens, this is done to testing how
      * the board shows some specific situations
      */
     tokenPositions[0][3] = 41;
     tokenPositions[1][3] = 7;
-    #endif
+#endif
 }
 
 T_actions core_getUserAction(void)
