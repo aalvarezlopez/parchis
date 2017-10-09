@@ -20,6 +20,9 @@ uint8_t dice_newLaunch(void)
     }
     temp = rand();
     __lastValue =  (temp % 6) + 1;
+    #ifdef TESTING
+    __lastValue = 1;
+    #endif
     return __lastValue;
 }
 

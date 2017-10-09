@@ -92,8 +92,8 @@ bool movementAccrossWall(uint8_t initialPosition, uint8_t finalPosition)
 {
     bool result = false;
     if(initialPosition == HOMEVALUE) {
-        brd_addToLog(logWdw, "Cheking movements when token is at home");
-        for(uint8_t i; i < NMAXWALLS; i++) {
+        brd_addToLog(logWdw, "\n**DEBUG**\nCheking movements when token is at home\n");
+        for(uint8_t i = 0; i < NMAXWALLS; i++) {
             if(walls[i] == finalPosition && walls[i] != INVALIDVALUE) {
                 result = true;
             }
@@ -101,8 +101,8 @@ bool movementAccrossWall(uint8_t initialPosition, uint8_t finalPosition)
     } else if(initialPosition <= __finalsPosition[currentPlayer] &&
               finalPosition >= __finalsPosition[currentPlayer]) {
         brd_addToLog(logWdw,
-                     "Cheking movements when token goes over its final position");
-        for(uint8_t i; i < NMAXWALLS; i++) {
+                     "\n**DEBUG**\nCheking movements when token goes over its final position\n");
+        for(uint8_t i = 0; i < NMAXWALLS; i++) {
             if(walls[i] <= __finalsPosition[currentPlayer] && walls[i] != INVALIDVALUE) {
                 result = true;
             }
@@ -110,19 +110,19 @@ bool movementAccrossWall(uint8_t initialPosition, uint8_t finalPosition)
     } else if(initialPosition < MAXCELLVALUE &&
               finalPosition > MAXCELLVALUE) {
         brd_addToLog(logWdw,
-                     "Cheking movements when token goes over general final position");
-        for(uint8_t i; i < NMAXWALLS; i++) {
+                     "\n**DEBUG**\nCheking movements when token goes over general final position\n");
+        for(uint8_t i = 0; i < NMAXWALLS; i++) {
             if((walls[i] <= finalPosition || walls[i] > initialPosition)
                     && walls[i] != INVALIDVALUE) {
                 char info[100];
-                sprintf(info, "wal number %d in position %d", i, walls[i]);
+                sprintf(info, "\n**DEBUG**\nwal number %d in position %d\n", i, walls[i]);
                 brd_addToLog(logWdw, info);
                 result = true;
             }
         }
     } else {
-        brd_addToLog(logWdw, "Cheking movements ");
-        for(uint8_t i; i < NMAXWALLS; i++) {
+        brd_addToLog(logWdw, "\n**DEBUG**\nCheking movements\n");
+        for(uint8_t i = 0; i < NMAXWALLS; i++) {
             if(walls[i] > initialPosition && walls[i] <= finalPosition
                     && walls[i] != INVALIDVALUE) {
                 result = true;
@@ -175,24 +175,20 @@ uint8_t getTokenToMove(uint8_t numberOfMovements, uint8_t *validMovements,
 {
     bool validKey = false;
     char ch;
-    char string[100];
-    sprintf(string, "Select token to move:\n");
+    char string[256];
+    sprintf(string, "\n\nACTION REQUIRED!\nSelect token to move:\n");
     for(uint8_t i = 0; i < numberOfMovements; i++) {
-        char tempStr[100];
+        char tempStr[256];
         sprintf(tempStr, " * [key=%d] Token in position %d\n", i + 1,
                 tokenPositions[currentPlayer][validMovements[i]] + 1);
         strcat(string, tempStr);
     }
-    brd_drawLog(logWdw, string);
-    refreshBoard();
+    brd_addToLog(logWdw, string);
     while(validKey != true) {
         ch = wgetch(cells[0]);
         if( (ch < '1') || (ch >= ('1' + numberOfMovements)) ) {
-            char invalidStr[100];
-            strcpy(invalidStr, string);
-            strcat(invalidStr, "Invalid key, please select a correct token to move");
-            brd_drawLog(logWdw, invalidStr);
-            refreshBoard();
+            sprintf(string, "Invalid key, please select a correct token to move\n");
+            brd_addToLog(logWdw, string);
         } else {
             validKey = true;
         }
@@ -210,8 +206,11 @@ void core_initialization(void)
     /*Replacement of the position of the tokens, this is done to testing how
      * the board shows some specific situations
      */
-    tokenPositions[0][3] = 41;
-    tokenPositions[1][3] = 7;
+    tokenPositions[0][3] = 43;
+    tokenPositions[0][2] = 6;
+    tokenPositions[1][3] = 45;
+    tokenPositions[1][2] = 45;
+    tokenPositions[1][1] = 10;
 #endif
 }
 
@@ -258,4 +257,5 @@ void core_executeUserAction(void)
     wgetch(cells[0]);
     currentPlayer++;
     currentPlayer = currentPlayer % 4;
+    brd_drawLog(logWdw, "Press q for exit, any key for launch dice");
 }

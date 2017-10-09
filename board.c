@@ -48,6 +48,10 @@ typedef enum {
 
 char __strLog[1024];
 
+#ifdef TESTING
+extern WINDOW *logWdw;
+#endif
+
 void brd_drawDice(WINDOW *window);
 
 void drawHorizontalCells(WINDOW **windows, uint16_t yPos, uint16_t xPos,
@@ -377,9 +381,14 @@ void brd_drawToken(WINDOW **windows, uint8_t token, uint8_t color)
     if( (token == CORNER1) || (token == CORNER2) || (token == CORNER3)
             || (token == CORNER4) || (token == CORNER5)
             || (token == CORNER6) || (token == CORNER7) || (token == CORNER8)) {
+        #ifdef TESTING
+        char string[255];
+        sprintf(string, "\n**DEBUG**\nDrawing special token in position %d\n");
+        brd_addToLog(logWdw, string);
+        #endif
         drawSpeciallToken(windows, token, color);
-    } else if((token > HORIZONTAL_LIMIT_0 && token < HORIZONTAL_LIMIT_1) ||
-              (token > HORIZONTAL_LIMIT_2 && token < HORIZONTAL_LIMIT_3)) {
+    } else if((token >= HORIZONTAL_LIMIT_0 && token < HORIZONTAL_LIMIT_1) ||
+              (token >= HORIZONTAL_LIMIT_2 && token < HORIZONTAL_LIMIT_3)) {
         mvwprintw(windows[token], 2, 1, "#");
         mvwprintw(windows[token], 3, 1, "#");
     } else {
@@ -517,7 +526,9 @@ void brd_addToLog(WINDOW *window, char *string)
     wbkgd(window, COLOR_PAIR(7));
     mvwprintw(window, 1, 1, __strLog);
     wrefresh(window);
+#ifdef TESTING
     wgetch(window);
+#endif
 }
 
 void brd_drawLog(WINDOW *window, char *string)
