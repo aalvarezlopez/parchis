@@ -19,10 +19,10 @@ WINDOW *logWdw;
 #define NMAXWALLS 16
 #define MAXCELLVALUE 68
 #define BASEOFENDS 70
-#define LENENDS 10
 
 uint8_t __homePosition[4] = {38, 55, 4, 21};
-uint8_t __finalsPosition[4] = {33, 50, 0, 16};
+uint8_t __finalsPosition[4] = {33, 50, 67, 16};
+uint8_t __startOfEnds[4] = {10, 20, 30, 0};
 
 uint8_t tokenPositions[4][4] = {{HOMEVALUE, HOMEVALUE, HOMEVALUE, HOMEVALUE},
     {HOMEVALUE, HOMEVALUE, HOMEVALUE, HOMEVALUE},
@@ -115,7 +115,7 @@ bool movementAccrossWall(uint8_t initialPosition, uint8_t finalPosition)
             if((walls[i] <= finalPosition || walls[i] > initialPosition)
                     && walls[i] != INVALIDVALUE) {
                 char info[100];
-                sprintf(info, "\n**DEBUG**\nwal number %d in position %d\n", i, walls[i]);
+                sprintf(info, "\n**DEBUG**\nwall number %d in position %d\n", i, walls[i]);
                 brd_addToLog(logWdw, info);
                 result = true;
             }
@@ -125,6 +125,9 @@ bool movementAccrossWall(uint8_t initialPosition, uint8_t finalPosition)
         for(uint8_t i = 0; i < NMAXWALLS; i++) {
             if(walls[i] > initialPosition && walls[i] <= finalPosition
                     && walls[i] != INVALIDVALUE) {
+                char info[100];
+                sprintf(info, "\n**DEBUG**\nwall number %d in position %d\n", i, walls[i]);
+                brd_addToLog(logWdw, info);
                 result = true;
             }
         }
@@ -201,17 +204,20 @@ void core_initialization(void)
     brd_drawHomes(home);
     brd_drawBoardTools(tools);
     brd_drawLog(logWdw, "Press q for exit, any key for launch dice");
-    refreshBoard();
 #ifdef TESTING
     /*Replacement of the position of the tokens, this is done to testing how
      * the board shows some specific situations
      */
     tokenPositions[0][3] = 43;
-    tokenPositions[0][2] = 6;
+    tokenPositions[0][2] = 31;
+    tokenPositions[0][1] = 83;
     tokenPositions[1][3] = 45;
     tokenPositions[1][2] = 45;
     tokenPositions[1][1] = 10;
+    tokenPositions[2][3] = 64;
+    tokenPositions[3][3] = 65;
 #endif
+    refreshBoard();
 }
 
 T_actions core_getUserAction(void)
@@ -237,18 +243,36 @@ void core_executeUserAction(void)
             __homePosition[currentPlayer];
     } else if(numberOfMovements > 0) {
         tokenToMove = getTokenToMove(numberOfMovements, validMovements, logWdw);
-        if((tokenPositions[currentPlayer][validMovements[tokenToMove]] <
+        if((tokenPositions[currentPlayer][validMovements[tokenToMove]] <=
                 __finalsPosition[currentPlayer]) &&
                 ((tokenPositions[currentPlayer][validMovements[tokenToMove]] + diceValue) >
                  __finalsPosition[currentPlayer])) {
+
+            char info[100];
+            sprintf(info, "\n**DEBUG**\nMovint to the final row\nPosition: %d\n"\
+                "Final position= %d\n"\
+                "Base = %d\n"\
+                "Adding = %d\n"\
+                "N cells = %d\n", tokenPositions[currentPlayer][validMovements[tokenToMove]] ,
+                __finalsPosition[currentPlayer], BASEOFENDS, __startOfEnds[currentPlayer],
+                ((tokenPositions[currentPlayer][validMovements[tokenToMove]] + diceValue)
+                    % __finalsPosition[currentPlayer]));
+            brd_addToLog(logWdw, info);
+
             tokenPositions[currentPlayer][validMovements[tokenToMove]] =
                 ((tokenPositions[currentPlayer][validMovements[tokenToMove]] + diceValue)
-                 % __finalsPosition[currentPlayer]) + ( BASEOFENDS + (LENENDS * currentPlayer));
+                 % __finalsPosition[currentPlayer]) + ( BASEOFENDS + (__startOfEnds[currentPlayer]));
+        }else{
+            if(tokenPositions[currentPlayer][validMovements[tokenToMove]] >= BASEOFENDS){
+                tokenPositions[currentPlayer][validMovements[tokenToMove]] =
+                    tokenPositions[currentPlayer][validMovements[tokenToMove]]  + diceValue;
+            }else{
+                tokenPositions[currentPlayer][validMovements[tokenToMove]] =
+                    tokenPositions[currentPlayer][validMovements[tokenToMove]]  + diceValue;
+                tokenPositions[currentPlayer][validMovements[tokenToMove]] %= MAXCELLVALUE;
+            }
+            sprintf(string, "Token moving. Press any key to continue");
         }
-        tokenPositions[currentPlayer][validMovements[tokenToMove]] =
-            tokenPositions[currentPlayer][validMovements[tokenToMove]]  + diceValue;
-        tokenPositions[currentPlayer][validMovements[tokenToMove]] %= MAXCELLVALUE;
-        sprintf(string, "Token moving. Press any key to continue");
     } else {
         sprintf(string, "Movement not possible. Press any key to continue");
     }
