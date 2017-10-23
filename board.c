@@ -505,6 +505,70 @@ void brd_drawTokentsAtHome(WINDOW **windows, uint8_t *numberOfTokens)
     }
 }
 
+void brd_drawTokentsAtGoal(WINDOW *window, uint8_t *numberOfTokens)
+{
+    if(window == NULL) {
+        window = newwin(2 * VCELL_WIDTH, 2 * HCELL_WIDTH,
+            7 * HCELL_HEIGHT + (VCELL_WIDTH/2),
+            7 * VCELL_HEIGHT + (HCELL_WIDTH/2));
+    }
+    werase(window);
+    box(window, 0, 0);
+    for(uint8_t i = 0; i < HCELL_WIDTH; i++){
+        wattron(window, COLOR_PAIR(1));
+        mvwprintw(window, 1, HCELL_WIDTH/2 + i, " ");
+        mvwprintw(window, 2, HCELL_WIDTH/2 + i, " ");
+        wattron(window, COLOR_PAIR(3));
+        mvwprintw(window, (2 * VCELL_WIDTH) - 2, HCELL_WIDTH/2 + i, " ");
+        mvwprintw(window, (2 * VCELL_WIDTH) - 3, HCELL_WIDTH/2 + i, " ");
+    }
+    for(uint8_t i = 0; i < HCELL_WIDTH / 2 - 1; i++){
+        wattron(window, COLOR_PAIR(1));
+        mvwprintw(window, 3, ((HCELL_WIDTH * 5) / 6) + i, " ");
+        mvwprintw(window, 4, ((HCELL_WIDTH * 5) / 6) + i, " ");
+        wattron(window, COLOR_PAIR(3));
+        mvwprintw(window, (2 * VCELL_WIDTH) - 4, ((HCELL_WIDTH * 5) / 6) + i, " ");
+        mvwprintw(window, (2 * VCELL_WIDTH) - 5, ((HCELL_WIDTH * 5) / 6) + i, " ");
+    }
+    for(uint8_t i = 0; i < VCELL_WIDTH; i++){
+        wattron(window, COLOR_PAIR(2));
+        mvwprintw(window, i + VCELL_WIDTH/2, 1, " ");
+        mvwprintw(window, i + VCELL_WIDTH/2, 2, " ");
+        mvwprintw(window, i + VCELL_WIDTH/2, 3, " ");
+        wattron(window, COLOR_PAIR(4));
+        mvwprintw(window, i + VCELL_WIDTH/2,(2 * HCELL_WIDTH) - 2, " ");
+        mvwprintw(window, i + VCELL_WIDTH/2,(2 * HCELL_WIDTH) - 3, " ");
+        mvwprintw(window, i + VCELL_WIDTH/2,(2 * HCELL_WIDTH) - 4, " ");
+    }
+    for(uint8_t i = 0; i < VCELL_WIDTH / 2 - 1; i++){
+        wattron(window, COLOR_PAIR(2));
+        mvwprintw(window, ((VCELL_WIDTH * 5) / 6) + i, 4, " ");
+        mvwprintw(window, ((VCELL_WIDTH * 5) / 6) + i, 5, " ");
+        mvwprintw(window, ((VCELL_WIDTH * 5) / 6) + i, 6, " ");
+        wattron(window, COLOR_PAIR(4));
+        mvwprintw(window, ((VCELL_WIDTH * 5) / 6) + i, (2 * HCELL_WIDTH) - 5, " ");
+        mvwprintw(window, ((VCELL_WIDTH * 5) / 6) + i, (2 * HCELL_WIDTH) - 6, " ");
+        mvwprintw(window, ((VCELL_WIDTH * 5) / 6) + i, (2 * HCELL_WIDTH) - 7, " ");
+    }
+    for(uint8_t i = 0; i < numberOfTokens[0]; i++){
+        wattron(window, COLOR_PAIR(1));
+        mvwprintw(window, 2, 2 + (i * 2), "#");
+    }
+    for(uint8_t i = 0; i < numberOfTokens[1]; i++){
+        wattron(window, COLOR_PAIR(2));
+        mvwprintw(window, (2 * VCELL_WIDTH) - 2, 2 + (i * 2), "#");
+    }
+    for(uint8_t i = 0; i < numberOfTokens[2]; i++){
+        wattron(window, COLOR_PAIR(3));
+        mvwprintw(window, 2 + (i * 2), 2, "#");
+    }
+    for(uint8_t i = 0; i < numberOfTokens[3]; i++){
+        wattron(window, COLOR_PAIR(4));
+        mvwprintw(window, 2 + (i * 2), (2 * HCELL_WIDTH) - 2, "#");
+    }
+    wrefresh(window);
+}
+
 void brd_drawBoardTools(WINDOW **windows)
 {
     if(windows[0] == NULL) {

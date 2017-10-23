@@ -12,6 +12,7 @@
 #include "dice.h"
 
 WINDOW *home[4];
+WINDOW *goal;
 WINDOW *cells[110];
 WINDOW *tools[10];
 WINDOW *logWdw;
@@ -31,6 +32,7 @@ uint8_t tokenPositions[4][4] = {{HOMEVALUE, HOMEVALUE, HOMEVALUE, HOMEVALUE},
 };
 uint8_t currentPlayer = 0;
 uint8_t numberOfTokensAtHome[] = {0, 0, 0, 0};
+uint8_t numberOfTokensAtGoal[] = {0, 0, 0, 0};
 uint8_t walls[NMAXWALLS] = { INVALIDVALUE, INVALIDVALUE, INVALIDVALUE, INVALIDVALUE,
                              INVALIDVALUE, INVALIDVALUE, INVALIDVALUE, INVALIDVALUE,
                              INVALIDVALUE, INVALIDVALUE, INVALIDVALUE, INVALIDVALUE,
@@ -86,6 +88,7 @@ void refreshBoard(void)
         }
     }
     brd_drawTokentsAtHome(home, numberOfTokensAtHome);
+    brd_drawTokentsAtGoal(goal, numberOfTokensAtGoal);
 }
 
 bool movementAccrossWall(uint8_t initialPosition, uint8_t finalPosition)
@@ -103,12 +106,15 @@ bool movementAccrossWall(uint8_t initialPosition, uint8_t finalPosition)
         brd_addToLog(logWdw,
                      "\n**DEBUG**\nCheking movements when token goes over its final position\n");
         for(uint8_t i = 0; i < NMAXWALLS; i++) {
-            if(walls[i] <= __finalsPosition[currentPlayer] && walls[i] != INVALIDVALUE) {
+            if(walls[i] <= __finalsPosition[currentPlayer]
+                && walls[i] > initialPosition
+                && walls[i] != INVALIDVALUE) {
                 result = true;
             }
         }
     } else if(initialPosition < MAXCELLVALUE &&
               finalPosition > MAXCELLVALUE) {
+        finalPosition %= MAXCELLVALUE;
         brd_addToLog(logWdw,
                      "\n**DEBUG**\nCheking movements when token goes over general final position\n");
         for(uint8_t i = 0; i < NMAXWALLS; i++) {

@@ -21,4 +21,5 @@ void brd_addToLog(WINDOW *window, char *string);
 void brd_drawDice(WINDOW* window);
 void brd_drawBoardTools(WINDOW **windows);
 void brd_cleanCells(WINDOW **cells, uint8_t numberOfCells);
+void brd_drawTokentsAtGoal(WINDOW *window, uint8_t *numberOfTokens);
 #endif
